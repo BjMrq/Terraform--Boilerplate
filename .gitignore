@@ -22,3 +22,4 @@ terraform.rc
 **/.env
 **/access_key*
 **/secret*
+**/init.config
