@@ -1,14 +1,14 @@
-resource "aws_cloudfront_origin_access_identity" "cloudfrontStaticAi" {
-  comment = "ServerlessStatic For ${var.appName}"
+resource "aws_cloudfront_origin_access_identity" "cloudfrontAccessIdentity" {
+  comment = "Origin Access Identity for S3"
 }
 
 resource "aws_cloudfront_distribution" "cloudfrontDistribution" {
   origin {
     domain_name = aws_s3_bucket.siteBucket.bucket_domain_name
-    origin_id   = var.s3Origin
+    origin_id   = aws_s3_bucket.siteBucket.id
 
     s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.cloudfrontStaticAi.cloudfront_access_identity_path
+      origin_access_identity = aws_cloudfront_origin_access_identity.cloudfrontAccessIdentity.cloudfront_access_identity_path
     }
   }
 
@@ -30,7 +30,7 @@ resource "aws_cloudfront_distribution" "cloudfrontDistribution" {
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = var.s3Origin
+    target_origin_id = aws_s3_bucket.siteBucket.id
 
     forwarded_values {
       query_string = false

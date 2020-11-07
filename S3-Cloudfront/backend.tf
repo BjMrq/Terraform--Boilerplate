@@ -2,10 +2,7 @@ provider "aws" {
   region = var.region
 }
 
+# terraform init -backend-config="init.config" 
 terraform {
-  backend "s3" {
-    bucket= "ecs-terraform-remote-state-bjmrq"
-    region="ca-central-1"
-    key= "teraform-state"
-  }
+  backend "s3" {}
 }

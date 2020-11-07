@@ -1,18 +1,20 @@
 # General
 variable "region" {
-  default     = "ca-central-1"
   description = "AWS Region"
   type        = string
 }
 
+variable "stateBucket" {
+  description = "S3 Bucket used to store state file"
+  type        = string
+}
+
 variable "environment" {
-  default     = "staging"
   description = "Tag the resources with an environment. Default is `staging`"
   type        = string
 }
 
 variable "appName" {
-  default="frontend-app"
   description = "The name for the application"
   type        = string
 }
@@ -20,9 +22,9 @@ variable "appName" {
 
 # Cloudfront
 
-variable "s3Origin" {
+variable "s3OriginId" {
   default="myS3Origin"
-  description = "S3 Origin"
+  description = "S3 Origin Id"
   type        = string
 }
 
@@ -52,5 +54,6 @@ variable "errorCachingMinTttl" {
 
 variable "priceClass" {
   default="PriceClass_100"
+  description="Price class that will define Cloudfront's edge locations"
   type=string
 }
