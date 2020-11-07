@@ -4,11 +4,6 @@ variable "region" {
   type        = string
 }
 
-variable "stateBucket" {
-  description = "S3 Bucket used to store state file"
-  type        = string
-}
-
 variable "environment" {
   description = "Tag the resources with an environment. Default is `staging`"
   type        = string

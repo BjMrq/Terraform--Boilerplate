@@ -7,21 +7,17 @@
 - Add variables used in ```variables.tf``` in ```terraform.tfvars```
 
 
-## Init 
-
+## Init Backend
 ```
 terraform init -backend-config="init.config" 
 ```
 
 ## Plan 
-
 ```
 terraform plan" 
 ```
 
-
 ## Apply 
-
 ```
 terraform apply 
 ```
@@ -33,13 +29,4 @@ In your application run the appropriate build command
 Deploy the builded application in s3
 ```
 aws s3 sync build s3://${your-bucket-name}
-```
-
-## Second environnement
-Since the relevant variables are exported from ```backend.tf``` you can deploy an other environnement with
-```
-terraform init \
-  -backend-config "bucket=$TF_VAR_stateBucket" \
-  -backend-config "region=$TF_VAR_region" \
-  -backend-config "key=terraform-state/$TF_VAR_appName/$TF_VAR_environment"
 ```

@@ -3,14 +3,9 @@ provider "aws" {
 }
 
 terraform {
-  backend "s3" {}
-}
-
-data "terraform_remote_state" "state" {
-  backend = "s3"
-  config {
-    bucket     = var.stateBucket
-    region     = var.region
-    key        = "terraform-state/${var.appName}/${var.environment}"
+  backend "s3" {
+    bucket     = "YOUR_BUCKET_STATE"
+    region     = "YOUR_REGION"
+    key        = "THE_KEY_PATH"
   }
 }
