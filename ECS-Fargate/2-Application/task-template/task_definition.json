@@ -1,0 +1,21 @@
+[
+  {
+    "name": "${taskDefinitionName}",
+    "image": "bjmrq/fargate-test:latest",
+    "essential": true,
+    "environment": ${environmentVariables},
+    "portMappings": [
+      {
+        "containerPort": ${dockerContainerPort}
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "${serviceName}-LogGroup",
+        "awslogs-region": "${region}",
+        "awslogs-stream-prefix": "${serviceName}-LogGroup-stream"
+      }
+    }
+  }
+]
