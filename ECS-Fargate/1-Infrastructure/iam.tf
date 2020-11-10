@@ -33,7 +33,13 @@ resource "aws_iam_role_policy" "fargateRolePolicy" {
         "logs:*",
         "cloudwatch:*",
         "elasticloadbalancing:*",
-        "secretsmanager:GetSecretValue"
+        "application-autoscaling:*",
+        "secretsmanager:GetSecretValue",
+        "iam:CreateServiceLinkedRole",
+        "sns:CreateTopic",
+        "sns:Subscribe",
+        "sns:Get*",
+        "sns:List*"
       ],
       "Resource": "*"
     }

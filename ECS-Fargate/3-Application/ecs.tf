@@ -1,5 +1,17 @@
 resource "aws_ecs_cluster" "fargateCluster" {
-  name = "${var.ecsClusterName}FargateCluster"
+  name = "${var.ecsClusterName}"
+  capacity_providers = ["FARGATE"]
+
+  setting {
+    name = "containerInsights"
+    value = "enabled"
+  }
+
+  tags = {
+    Name = "${var.ecsClusterName}FargateCluster"
+    Application = var.appName
+    Environement = var.env
+  }
 }
 
 data "template_file" "taskDefinitionTemplate" {
@@ -14,6 +26,7 @@ data "template_file" "taskDefinitionTemplate" {
     repositoryAuthSecretArn = data.terraform_remote_state.infrastructure.outputs.dockerAuthArn
     environmentVariables    = jsonencode(var.environmentVariables)
   }
+
 }
 
 resource "aws_ecs_task_definition" "taskDefinition" {
@@ -27,6 +40,11 @@ resource "aws_ecs_task_definition" "taskDefinition" {
   network_mode             = "awsvpc"
   execution_role_arn       = data.terraform_remote_state.infrastructure.outputs.fargateRoleArn
   task_role_arn            = data.terraform_remote_state.infrastructure.outputs.fargateRoleArn
+
+  tags = {
+    Application = var.appName
+    Environement = var.env
+  }
 }
 
 resource "aws_ecs_service" "ecsService" {
@@ -43,7 +61,7 @@ resource "aws_ecs_service" "ecsService" {
 
   network_configuration {
     security_groups  = [aws_security_group.serviceSecurityGroup.id]
-    subnets          = [data.terraform_remote_state.infrastructure.outputs.subnetDefaultAz1]
+    subnets          = [data.terraform_remote_state.infrastructure.outputs.defaultAz1Id]
     assign_public_ip = true
   }
 
@@ -52,8 +70,9 @@ resource "aws_ecs_service" "ecsService" {
     container_port   = var.dockerContainerPort
     target_group_arn = aws_alb_target_group.ecsBackendTargetGroup.arn
   }
-}
 
-resource "aws_cloudwatch_log_group" "ecsServiceLogGroup" {
-  name = "${var.serviceName}-LogGroup"
+  tags = {
+    Application = var.appName
+    Environement = var.env
+  }
 }

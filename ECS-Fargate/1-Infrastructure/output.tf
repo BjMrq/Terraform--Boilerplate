@@ -6,13 +6,14 @@ output "fargateRoleArn" {
   value = aws_iam_role.fargateRole.arn
 }
 
-output "subnetDefaultAz1" {
+output "defaultAz1Id" {
   value = aws_default_subnet.defaultAz1.id
 }
 
-output "subnetDefaultAz2" {
+output "defaultAz2Id" {
   value = aws_default_subnet.defaultAz2.id
 }
+
 
 output "VPCdefaultCidr" {
   value = aws_default_vpc.default.cidr_block
