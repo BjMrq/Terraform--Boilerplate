@@ -1,5 +1,5 @@
 resource "aws_ecs_cluster" "fargateCluster" {
-  name = "${var.ecsClusterName}"
+  name = var.ecsClusterName
   capacity_providers = ["FARGATE"]
 
   setting {
@@ -14,8 +14,32 @@ resource "aws_ecs_cluster" "fargateCluster" {
   }
 }
 
+locals {
+  databaseEnvironement = [{
+    name: "DB_HOST", 
+    value: data.terraform_remote_state.platforms.outputs.dbHost
+  },
+  {
+    name: "DB_PORT", 
+    value: data.terraform_remote_state.platforms.outputs.dbPort
+  },
+  {
+    name: "DB_NAME", 
+    value: data.terraform_remote_state.platforms.outputs.dbName
+  },
+  {
+    name: "DB_USER", 
+    value: data.terraform_remote_state.platforms.outputs.dbUser
+  },
+  {
+    name: "DB_PASSWORD", 
+    value: data.terraform_remote_state.platforms.outputs.dbPassword
+  }]
+}
+
 data "template_file" "taskDefinitionTemplate" {
   template = file("task-template/task_definition.json")
+ 
 
   vars = {
     taskDefinitionName      = var.taskDefinitionName
@@ -24,7 +48,7 @@ data "template_file" "taskDefinitionTemplate" {
     dockerContainerPort     = var.dockerContainerPort
     region                  = var.region
     repositoryAuthSecretArn = data.terraform_remote_state.infrastructure.outputs.dockerAuthArn
-    environmentVariables    = jsonencode(var.environmentVariables)
+    environmentVariables    = jsonencode(concat(var.environmentVariables, local.databaseEnvironement))
   }
 
 }
@@ -74,5 +98,29 @@ resource "aws_ecs_service" "ecsService" {
   tags = {
     Application = var.appName
     Environement = var.env
+  }
+}
+
+resource "aws_security_group" "serviceSecurityGroup" {
+  name        = "${var.serviceName}SecurityGroup"
+  description = "Security for ${var.serviceName} group to communicate in and out"
+  vpc_id      = aws_default_vpc.default.id
+
+  ingress {
+    from_port   = var.dockerContainerPort
+    protocol    = "TCP"
+    to_port     = var.dockerContainerPort
+    cidr_blocks = [aws_default_vpc.default.cidr_block]
+  }
+
+  egress {
+    from_port   = 0
+    protocol    = "-1"
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.serviceName}SecurityGroup"
   }
 }

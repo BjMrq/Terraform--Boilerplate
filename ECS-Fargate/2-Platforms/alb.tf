@@ -73,3 +73,36 @@ resource "aws_alb_listener" "ecsALBListenerHTTP" {
 
 #   depends_on = [aws_alb_target_group.ecsBackendTargetGroup]
 # }
+
+resource "aws_security_group" "loadBalancerSecurityGroup" {
+  name        = "ALBSecurityGroup"
+  description = "Controll access to the ALB"
+  vpc_id      = data.terraform_remote_state.infrastructure.outputs.VPCdefaultId
+
+  ingress {
+    from_port   = 80
+    protocol    = "TCP"
+    to_port     = var.dockerContainerPort
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    protocol    = "TCP"
+    to_port     = var.dockerContainerPort
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    protocol    = "-1"
+    to_port     = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name         = "ALBSecurityGroup"
+    Application  = var.appName
+    Environement = var.env
+  }
+}

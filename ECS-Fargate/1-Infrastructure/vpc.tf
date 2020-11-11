@@ -3,6 +3,8 @@
 resource "aws_default_vpc" "default" {
   tags = {
     Name = "Default VPC"
+    Application= var.appName
+    Environement = var.env
   }
 }
 
@@ -11,6 +13,8 @@ resource "aws_default_subnet" "defaultAz1" {
 
   tags = {
     Name = "Default subnet for ${var.availabilityZone1}"
+    Application= var.appName
+    Environement = var.env
   }
 }
 
@@ -19,5 +23,18 @@ resource "aws_default_subnet" "defaultAz2" {
 
   tags = {
     Name = "Default subnet for ${var.availabilityZone2}"
+    Application= var.appName
+    Environement = var.env
+  }
+}
+
+resource "aws_db_subnet_group" "RDSSubnet" {
+  name       = "RDSSubnet"
+  subnet_ids = [aws_default_subnet.defaultAz1.id]
+
+  tags = {
+    Name = "Default RDS subnet for ${var.availabilityZone1}"
+    Application= var.appName
+    Environement = var.env
   }
 }

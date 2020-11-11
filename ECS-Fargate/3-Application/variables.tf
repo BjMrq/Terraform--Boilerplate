@@ -4,16 +4,6 @@ variable "region" {
   type        = string
 }
 
-variable "availabilityZone1" {
-  description = "AWS Availibility Zone 1"
-  type        = string
-}
-
-variable "availabilityZone2" {
-  description = "AWS Availibility Zone 2"
-  type        = string
-}
-
 variable "env" {
   description = "Tag the resources with an environment. Default is `staging`"
   type        = string
@@ -26,6 +16,17 @@ variable "stateBucket" {
 
 variable "appName" {
   description = "The name for the application"
+  type        = string
+}
+
+# VPC Subents
+variable "availabilityZone1" {
+  description = "AWS Availibility Zone 1"
+  type        = string
+}
+
+variable "availabilityZone2" {
+  description = "AWS Availibility Zone 2"
   type        = string
 }
 
