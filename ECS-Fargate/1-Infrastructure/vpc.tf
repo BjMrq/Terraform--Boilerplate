@@ -29,12 +29,12 @@ resource "aws_default_subnet" "defaultAz2" {
 }
 
 resource "aws_db_subnet_group" "RDSSubnet" {
-  name       = "RDSSubnet"
-  subnet_ids = [aws_default_subnet.defaultAz1.id]
+  name       = "rdssubnet"
+  subnet_ids = [aws_default_subnet.defaultAz1.id, aws_default_subnet.defaultAz2.id]
 
   tags = {
-    Name = "Default RDS subnet for ${var.availabilityZone1}"
-    Application= var.appName
+    Name         = "Default RDS subnet for ${var.availabilityZone1}"
+    Application  = var.appName
     Environement = var.env
   }
 }

@@ -14,7 +14,7 @@ resource "aws_db_instance" "RDS" {
   publicly_accessible             = true
   enabled_cloudwatch_logs_exports = ["postgresql", "upgrade"]
 
-  db_subnet_group_name   = aws_db_subnet_group.RDSSubnet.name
+  db_subnet_group_name   = data.terraform_remote_state.infrastructure.outputs.RDSSubnetName
   vpc_security_group_ids = [aws_security_group.RDSSecurityGroup.id]
 
   tags = {
@@ -27,7 +27,7 @@ resource "aws_db_instance" "RDS" {
 resource "aws_security_group" "RDSSecurityGroup" {
   name        = "RDSSecurityGroup"
   description = "Controll access to the RDS"
-  vpc_id      = aws_default_vpc.default.id
+  vpc_id      = data.terraform_remote_state.infrastructure.outputs.defaultVPCId
 
   // Access from from controlled ip
   ingress {
@@ -42,10 +42,10 @@ resource "aws_security_group" "RDSSecurityGroup" {
     from_port   = 5432
     protocol    = "TCP"
     to_port     = 5432
-    cidr_blocks = [[
+    cidr_blocks = [
     data.terraform_remote_state.infrastructure.outputs.defaultAz1Cidr,
     data.terraform_remote_state.infrastructure.outputs.defaultAz2Cidr
-  ]]
+  ]
   }
 
   egress {

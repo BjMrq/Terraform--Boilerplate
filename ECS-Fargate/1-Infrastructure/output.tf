@@ -10,6 +10,11 @@ output "fargateRoleArn" {
 }
 
 # Subnets
+output "defaultVPCId" {
+  description="Default VPC id"
+  value = aws_default_vpc.default.id
+}
+
 output "defaultAz1Id" {
   description="Default availibility zone 1 subnet id"
   value = aws_default_subnet.defaultAz1.id

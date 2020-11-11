@@ -4,6 +4,10 @@ output "publicDnsALB" {
   value = aws_alb.ecsAppLoadBalancer.dns_name
 }
 
+output "ALBServiceTargetGroupArn" {
+  value = aws_alb_target_group.ecsServiceTargetGroup.arn
+}
+
 # RDS
 output "dbHost" {
   description = "The host to connect to the database"
@@ -22,7 +26,7 @@ output "dbName" {
 
 output "dbUser" {
   description = "The user to connect to the database"
-  value = aws_db_instance.RDS.user
+  value = aws_db_instance.RDS.username
 }
 
 output "dbPassword" {

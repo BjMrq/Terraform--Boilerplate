@@ -1,47 +1,49 @@
 resource "aws_ecs_cluster" "fargateCluster" {
-  name = var.ecsClusterName
+  name               = var.ecsClusterName
   capacity_providers = ["FARGATE"]
 
   setting {
-    name = "containerInsights"
+    name  = "containerInsights"
     value = "enabled"
   }
 
   tags = {
-    Name = "${var.ecsClusterName}FargateCluster"
-    Application = var.appName
+    Name         = "${var.ecsClusterName}FargateCluster"
+    Application  = var.appName
     Environement = var.env
   }
 }
 
 locals {
   databaseEnvironement = [{
-    name: "DB_HOST", 
-    value: data.terraform_remote_state.platforms.outputs.dbHost
-  },
-  {
-    name: "DB_PORT", 
-    value: data.terraform_remote_state.platforms.outputs.dbPort
-  },
-  {
-    name: "DB_NAME", 
-    value: data.terraform_remote_state.platforms.outputs.dbName
-  },
-  {
-    name: "DB_USER", 
-    value: data.terraform_remote_state.platforms.outputs.dbUser
-  },
-  {
-    name: "DB_PASSWORD", 
-    value: data.terraform_remote_state.platforms.outputs.dbPassword
-  }]
+    name : "DB_HOST",
+    value : data.terraform_remote_state.platforms.outputs.dbHost
+    },
+    {
+      name : "DB_PORT",
+      value : jsonencode(data.terraform_remote_state.platforms.outputs.dbPort)
+    },
+    {
+      name : "DB_NAME",
+      value : data.terraform_remote_state.platforms.outputs.dbName
+    },
+    {
+      name : "DB_USER",
+      value : data.terraform_remote_state.platforms.outputs.dbUser
+    },
+    {
+      name : "DB_PASSWORD",
+      value : data.terraform_remote_state.platforms.outputs.dbPassword
+    }
+  ]
 }
 
 data "template_file" "taskDefinitionTemplate" {
   template = file("task-template/task_definition.json")
- 
+
 
   vars = {
+    env                     = var.env
     taskDefinitionName      = var.taskDefinitionName
     serviceName             = var.serviceName
     dockerImage             = var.dockerImage
@@ -66,7 +68,7 @@ resource "aws_ecs_task_definition" "taskDefinition" {
   task_role_arn            = data.terraform_remote_state.infrastructure.outputs.fargateRoleArn
 
   tags = {
-    Application = var.appName
+    Application  = var.appName
     Environement = var.env
   }
 }
@@ -92,11 +94,11 @@ resource "aws_ecs_service" "ecsService" {
   load_balancer {
     container_name   = var.taskDefinitionName
     container_port   = var.dockerContainerPort
-    target_group_arn = aws_alb_target_group.ecsBackendTargetGroup.arn
+    target_group_arn = data.terraform_remote_state.platforms.outputs.ALBServiceTargetGroupArn
   }
 
   tags = {
-    Application = var.appName
+    Application  = var.appName
     Environement = var.env
   }
 }
@@ -104,13 +106,13 @@ resource "aws_ecs_service" "ecsService" {
 resource "aws_security_group" "serviceSecurityGroup" {
   name        = "${var.serviceName}SecurityGroup"
   description = "Security for ${var.serviceName} group to communicate in and out"
-  vpc_id      = aws_default_vpc.default.id
+  vpc_id      = data.terraform_remote_state.infrastructure.outputs.VPCdefaultId
 
   ingress {
     from_port   = var.dockerContainerPort
     protocol    = "TCP"
     to_port     = var.dockerContainerPort
-    cidr_blocks = [aws_default_vpc.default.cidr_block]
+    cidr_blocks = [data.terraform_remote_state.infrastructure.outputs.VPCdefaultCidr]
   }
 
   egress {

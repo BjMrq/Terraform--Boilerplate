@@ -1,4 +1,4 @@
-resource "aws_alb_target_group" "ecsBackendTargetGroup" {
+resource "aws_alb_target_group" "ecsServiceTargetGroup" {
   name        = "${var.serviceName}TagetGroup"
   port        = var.dockerContainerPort
   protocol    = "HTTP"
@@ -52,10 +52,10 @@ resource "aws_alb_listener" "ecsALBListenerHTTP" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_alb_target_group.ecsBackendTargetGroup.arn
+    target_group_arn = aws_alb_target_group.ecsServiceTargetGroup.arn
   }
 
-  depends_on = [aws_alb_target_group.ecsBackendTargetGroup]
+  depends_on = [aws_alb_target_group.ecsServiceTargetGroup]
 }
 
 # For HTTPS listener
@@ -68,10 +68,10 @@ resource "aws_alb_listener" "ecsALBListenerHTTP" {
 
 #   default_action {
 #     type             = "forward"
-#     target_group_arn = aws_alb_target_group.ecsBackendTargetGroup.arn
+#     target_group_arn = aws_alb_target_group.ecsServiceTargetGroup.arn
 #   }
 
-#   depends_on = [aws_alb_target_group.ecsBackendTargetGroup]
+#   depends_on = [aws_alb_target_group.ecsServiceTargetGroup]
 # }
 
 resource "aws_security_group" "loadBalancerSecurityGroup" {

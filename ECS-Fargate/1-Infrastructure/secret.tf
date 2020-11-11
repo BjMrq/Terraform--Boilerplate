@@ -1,5 +1,5 @@
 resource "aws_secretsmanager_secret" "dockerRegistryAuth" {
-  name = "fhhjgj"
+  name = "fhhjgsdsdj"
 }
 
 resource "aws_secretsmanager_secret_version" "dockerRegistryAuthSecret" {

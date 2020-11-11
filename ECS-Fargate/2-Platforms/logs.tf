@@ -1,4 +1,4 @@
 
 resource "aws_cloudwatch_log_group" "ecsServiceLogGroup" {
-  name = "${var.serviceName}-LogGroup"
+  name = "${var.env}-${var.serviceName}-LogGroup"
 }
