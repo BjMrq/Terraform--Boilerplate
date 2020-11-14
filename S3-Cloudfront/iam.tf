@@ -1,6 +1,5 @@
 
 # S3
-
 resource "aws_s3_bucket_policy" "siteBucketPolicy" {
   bucket = aws_s3_bucket.siteBucket.id
 
@@ -30,3 +29,8 @@ data "aws_iam_policy_document" "s3Policy" {
     }
   }
 }
+
+
+# Replication to be added 
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket
+
