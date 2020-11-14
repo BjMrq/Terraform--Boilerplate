@@ -22,5 +22,3 @@ terraform.rc
 **/.env
 **/access_key*
 **/init.config
-
-**/application
