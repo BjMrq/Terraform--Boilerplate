@@ -1,6 +1,6 @@
 # Define more vpc and subnets here
 
-resource "aws_default_vpc" "default" {
+resource "aws_default_vpc" "defaultVPC" {
   tags = {
     Name = "Default VPC"
     Application= var.appName
@@ -36,5 +36,27 @@ resource "aws_db_subnet_group" "RDSSubnet" {
     Name         = "Default RDS subnet for ${var.availabilityZone1}"
     Application  = var.appName
     Environement = var.env
+  }
+}
+
+resource "aws_default_security_group" "defaultSecurityGroup" {
+  vpc_id = aws_default_vpc.defaultVPC.id
+
+  ingress {
+    protocol  = -1
+    self      = true
+    from_port = 0
+    to_port   = 0
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "Default Securioty Group"
   }
 }
